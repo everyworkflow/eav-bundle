@@ -1,0 +1,34 @@
+{
+    "name": "everyworkflow/eav-bundle",
+    "description": "Eav bundle for every workflow project.",
+    "type": "package",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "EveryWorkflow",
+            "email": "everyworkflow@gmail.com"
+        }
+    ],
+    "require": {
+        "nesbot/carbon": "^2.43",
+        "everyworkflow/core-bundle": "dev-main",
+        "everyworkflow/mongo-bundle": "dev-main",
+        "everyworkflow/data-form-bundle": "dev-main",
+        "everyworkflow/data-grid-bundle": "dev-main"
+    },
+    "autoload": {
+        "psr-4": {
+            "EveryWorkflow\\EavBundle\\": "./"
+        },
+        "exclude-from-classmap": [
+            "Resources",
+            "Tests"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "EveryWorkflow\\EavBundle\\Tests\\": "Tests/"
+        }
+    },
+    "minimum-stability": "dev"
+}
