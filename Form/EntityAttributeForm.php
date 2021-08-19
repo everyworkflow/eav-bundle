@@ -59,22 +59,24 @@ class EntityAttributeForm extends Form implements EntityAttributeFormInterface
             // ignoring if attributes doesn't exist
         }
 
-        $this->addField('status', $this->formFieldFactory->createField([
-            'label' => 'Status',
-            'name' => 'status',
-            'field_type' => 'select_field',
-            'options' => [
-                $this->fieldOptionFactory->create(Option::class, [
-                    'key' => 'enable',
-                    'value' => 'Enable',
-                ]),
-                $this->fieldOptionFactory->create(Option::class, [
-                    'key' => 'disable',
-                    'value' => 'Disable',
-                ]),
-            ],
-            'sort_order' => 2,
-        ]));
+        if (!isset($this->fields['status'])) {
+            $this->addField('status', $this->formFieldFactory->createField([
+                'label' => 'Status',
+                'name' => 'status',
+                'field_type' => 'select_field',
+                'options' => [
+                    $this->fieldOptionFactory->create(Option::class, [
+                        'key' => 'enable',
+                        'value' => 'Enable',
+                    ]),
+                    $this->fieldOptionFactory->create(Option::class, [
+                        'key' => 'disable',
+                        'value' => 'Disable',
+                    ]),
+                ],
+                'sort_order' => 2,
+            ]));
+        }
 
         $this->addField('created_at', $this->formFieldFactory->createField([
             'label' => 'Created at',
