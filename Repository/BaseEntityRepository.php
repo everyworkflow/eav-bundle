@@ -124,6 +124,29 @@ class BaseEntityRepository extends BaseDocumentRepository implements BaseEntityR
         if (!$entity->getUpdatedAt()) {
             $entity->setUpdatedAt(Carbon::now());
         }
+        $documentData = $entity->toArray();
+        if (!isset($documentData['created_at'])) {
+            $documentData['created_at'] = Carbon::now()->toTimeString();
+        }
+        if (!isset($documentData['updated_at'])) {
+            $documentData['updated_at'] = Carbon::now()->toTimeString();
+        }
+
+        foreach ($this->getAttributes() as $attribute) {
+            if (isset($documentData[$attribute->getCode()])) {
+                switch ($attribute->getType()) {
+                    case 'date_attribute':
+                    case 'date_time_attribute': {
+                        if (is_string($documentData[$attribute->getCode()])) {
+                            $documentData[$attribute->getCode()] = new \MongoDB\BSON\UTCDateTime(strtotime($documentData[$attribute->getCode()]));
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+
+        $newDocument = $this->getNewDocument($documentData);
 
         return $this->save($entity, $otherFilter, $otherOptions);
     }

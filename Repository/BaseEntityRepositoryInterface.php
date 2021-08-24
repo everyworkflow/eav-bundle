@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace EveryWorkflow\EavBundle\Repository;
 
+use EveryWorkflow\CoreBundle\Support\ArrayableInterface;
 use EveryWorkflow\DataFormBundle\Model\FormInterface;
 use EveryWorkflow\EavBundle\Attribute\BaseAttributeInterface;
 use EveryWorkflow\EavBundle\Entity\BaseEntityInterface;
