@@ -54,7 +54,7 @@ const EntityFormPage = () => {
                     uuid !== '' ? '/eav/entity/' + uuid : '/eav/entity/create'
                 );
                 handleResponse(response);
-            } catch (error) {
+            } catch (error: any) {
                 await PushAlertAction({
                     message: error.message,
                     title: 'Fetch error',
@@ -93,7 +93,7 @@ const EntityFormPage = () => {
                 submitData
             );
             handlePostResponse(response);
-        } catch (error) {
+        } catch (error: any) {
             await PushAlertAction({
                 message: error.message,
                 title: 'Submit error',

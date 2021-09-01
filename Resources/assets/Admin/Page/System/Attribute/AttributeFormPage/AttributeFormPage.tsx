@@ -56,7 +56,7 @@ const AttributeFormPage = () => {
                         : '/eav/attribute/create'
                 );
                 handleResponse(response);
-            } catch (error) {
+            } catch (error: any) {
                 await PushAlertAction({
                     message: error.message,
                     title: 'Fetch error',
@@ -97,7 +97,7 @@ const AttributeFormPage = () => {
                 submitData
             );
             handlePostResponse(response);
-        } catch (error) {
+        } catch (error: any) {
             await PushAlertAction({
                 message: error.message,
                 title: 'Submit error',
