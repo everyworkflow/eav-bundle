@@ -167,17 +167,17 @@ class BaseEntityRepository extends BaseDocumentRepository implements BaseEntityR
      */
     public function getAttributes(): array
     {
-        $attributeInfo = $this->coreHelper->getEWFCacheInterface()
-            ->getItem('base_entity_attribute' . $this->getEntityCode());
         if (!$this->entityAttributes) {
+            $attributeInfo = $this->coreHelper->getEWFCacheInterface()
+                ->getItem('base_entity_attribute' . $this->getEntityCode());
             if (!$attributeInfo->isHit() || true) {
-                //                $this->setSystemAttribute();
+                // $this->setSystemAttribute();
                 $this->entityAttributes = $this->attributeRepository->find(['entity_code' => $this->getEntityCode()]);
                 $attributeInfo->set($this->entityAttributes);
                 $this->coreHelper->getEWFCacheInterface()->save($attributeInfo);
+                $this->entityAttributes = $attributeInfo->get();
             }
         }
-        $this->entityAttributes = $attributeInfo->get();
 
         return $this->entityAttributes;
     }
