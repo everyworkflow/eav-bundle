@@ -15,8 +15,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class BaseEavTestCase extends BaseGridTestCase
 {
-    protected function getEavConfigProvider(ContainerInterface $container): EavConfigProviderInterface
+    protected function getEavConfigProvider(): EavConfigProviderInterface
     {
-        return new EavConfigProvider($container->getParameter('eav'));
+        return new EavConfigProvider($this->getContainer()->getParameter('eav'));
     }
 }

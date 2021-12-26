@@ -8,10 +8,10 @@ declare(strict_types=1);
 
 namespace EveryWorkflow\EavBundle\Tests\Unit\Attribute;
 
-use EveryWorkflow\CoreBundle\Annotation\EWFAnnotationReader;
 use EveryWorkflow\CoreBundle\Helper\CoreHelper;
 use EveryWorkflow\CoreBundle\Helper\CoreHelperInterface;
 use EveryWorkflow\CoreBundle\Model\DataObjectInterface;
+use EveryWorkflow\CoreBundle\Model\SystemDateTime;
 use EveryWorkflow\DataFormBundle\Factory\FieldOptionFactory;
 use EveryWorkflow\DataGridBundle\Factory\ActionFactory;
 use EveryWorkflow\DataGridBundle\Factory\DataGridFactory;
@@ -22,7 +22,6 @@ use EveryWorkflow\EavBundle\Factory\AttributeFactory;
 use EveryWorkflow\EavBundle\Factory\AttributeFactoryInterface;
 use EveryWorkflow\EavBundle\Form\AttributeForm;
 use EveryWorkflow\EavBundle\GridConfig\AttributeGridConfig;
-use EveryWorkflow\EavBundle\Model\EavConfigProvider;
 use EveryWorkflow\EavBundle\Model\EavConfigProviderInterface;
 use EveryWorkflow\EavBundle\Repository\AttributeRepository;
 use EveryWorkflow\EavBundle\Repository\AttributeRepositoryInterface;
@@ -39,44 +38,41 @@ class AttributeCrudTest extends BaseEavTestCase
 
     protected array $testAttributeData = [];
 
-    protected function getNewCoreHelper(string $documentClass): CoreHelperInterface
+    protected function getNewCoreHelper(): CoreHelperInterface
     {
-        /* TODO: Get original EWFAnnotationReader object to also include validateData() */
-        $annotationReader = $this->getMockBuilder(EWFAnnotationReader::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $annotationReader->method('getDocumentClass')->willReturn($documentClass);
-        $annotationReader->method('validateData')->willReturn(true);
         $coreHelper = $this->getMockBuilder(CoreHelper::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $coreHelper->method('getEWFAnnotationReaderInterface')->willReturn($annotationReader);
 
+        /** @var CoreHelperInterface $coreHelper */
         return $coreHelper;
     }
 
     protected function setUp(): void
     {
         parent::setUp();
-        $container = self::getContainer();
+        $container = $this->getContainer();
         $this->mongoConnection = $this->getMongoConnection();
-        $this->eavConfigProvider = new EavConfigProvider($container->getParameter('eav'));
+        $this->eavConfigProvider = $this->getEavConfigProvider();
         $this->attributeFactory = new AttributeFactory($this->getDataObjectFactory(), $container, $this->eavConfigProvider);
         $this->attributeRepository = new AttributeRepository(
             $this->mongoConnection,
             $this->attributeFactory,
-            $this->getNewCoreHelper(AttributeDocument::class)
+            $this->getNewCoreHelper(),
+            new SystemDateTime($this->getCoreConfigProvider()),
+            $this->getValidatorFactory()
         );
+        
         for ($i = 1; $i < 50; ++$i) {
             $this->testAttributeData[] = $this->attributeFactory->createAttribute([
-                'code' => 'attr_'.$i,
-                'name' => 'Test attribute '.$i,
+                'code' => 'attr_' . $i,
+                'name' => 'Test attribute ' . $i,
                 'entity_code' => 'test_entity_crud',
                 'type' => 'text_attribute',
             ]);
         }
         foreach ($this->testAttributeData as $item) {
-            $this->attributeRepository->save($item);
+            $this->attributeRepository->saveOne($item);
         }
     }
 
@@ -88,11 +84,11 @@ class AttributeCrudTest extends BaseEavTestCase
 
     public function testListPageWithPagination(): void
     {
-//         self::assertCount(
-//             $this->attributeRepository->getCollection()->countDocuments(),
-//             $this->testAttributeData,
-//             'Mongo document count must be same.'
-//         );
+        //         self::assertCount(
+        //             $this->attributeRepository->getCollection()->countDocuments(),
+        //             $this->testAttributeData,
+        //             'Mongo document count must be same.'
+        //         );
 
         $container = self::getContainer();
         $dataObjectFactory = $this->getDataObjectFactory();
@@ -115,7 +111,9 @@ class AttributeCrudTest extends BaseEavTestCase
         $entityRepository = new EntityRepository(
             $this->mongoConnection,
             $this->attributeFactory,
-            $this->getNewCoreHelper(EntityDocument::class)
+            $this->getNewCoreHelper(),
+            new SystemDateTime($this->getCoreConfigProvider()),
+            $this->getValidatorFactory()
         );
         $form = new AttributeForm(
             $dataObjectFactory->create(),

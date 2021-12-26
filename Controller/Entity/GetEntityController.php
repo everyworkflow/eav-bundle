@@ -6,14 +6,13 @@
 
 declare(strict_types=1);
 
-namespace EveryWorkflow\EavBundle\Controller\Admin\Entity;
+namespace EveryWorkflow\EavBundle\Controller\Entity;
 
+use EveryWorkflow\CoreBundle\Annotation\EwRoute;
 use EveryWorkflow\EavBundle\Form\EntityFormInterface;
 use EveryWorkflow\EavBundle\Repository\EntityRepositoryInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
 
 class GetEntityController extends AbstractController
 {
@@ -28,17 +27,22 @@ class GetEntityController extends AbstractController
         $this->entityRepository = $entityRepository;
     }
 
-    /**
-     * @Route(
-     *     path="admin_api/eav/entity/{uuid}",
-     *     defaults={"uuid"="create"},
-     *     name="admin.eav.entity.view",
-     *     methods="GET"
-     * )
-     *
-     * @throws \ReflectionException
-     */
-    public function __invoke(string $uuid, Request $request): JsonResponse
+    #[EwRoute(
+        path: "eav/entity/{uuid}",
+        name: 'eav.entity.view',
+        methods: 'GET',
+        permissions: 'eav.entity.view',
+        swagger: [
+            'parameters' => [
+                [
+                    'name' => 'uuid',
+                    'in' => 'path',
+                    'default' => 'create',
+                ]
+            ]
+        ]
+    )]
+    public function __invoke(string $uuid = 'create'): JsonResponse
     {
         $data = [
             'data_form' => $this->entityForm->toArray(),
@@ -53,6 +57,6 @@ class GetEntityController extends AbstractController
             }
         }
 
-        return (new JsonResponse())->setData($data);
+        return new JsonResponse($data);
     }
 }

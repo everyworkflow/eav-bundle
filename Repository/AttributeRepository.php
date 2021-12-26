@@ -8,35 +8,16 @@ declare(strict_types=1);
 
 namespace EveryWorkflow\EavBundle\Repository;
 
-use EveryWorkflow\CoreBundle\Annotation\RepoDocument;
 use EveryWorkflow\EavBundle\Attribute\BaseAttribute;
-use EveryWorkflow\EavBundle\Document\AttributeDocument;
 use EveryWorkflow\MongoBundle\Repository\BaseDocumentRepository;
-use MongoDB\Model\BSONDocument;
+use EveryWorkflow\MongoBundle\Support\Attribute\RepositoryAttribute;
 
-/**
- * @RepoDocument(doc_name=AttributeDocument::class)
- */
+#[RepositoryAttribute(
+    documentClass: BaseAttribute::class,
+    collectionName: 'attribute_collection',
+    primaryKey: ['entity_code', 'code']
+)]
 class AttributeRepository extends BaseDocumentRepository implements AttributeRepositoryInterface
 {
-    protected string $collectionName = 'attribute_collection';
-    protected array $indexNames = ['entity_code', 'code'];
-
-    /**
-     * @param array $filter
-     *
-     * @return BaseAttribute[]
-     */
-    public function find(array $filter = [], array $options = []): array
-    {
-        $items = [];
-        $mongoData = $this->getCollection()->find($filter, $options);
-        /** @var BSONDocument $mongoItem */
-        foreach ($mongoData as $mongoItem) {
-            $itemData = $mongoItem->getArrayCopy();
-            $items[] = $this->getDocumentFactory()->createAttribute($itemData);
-        }
-
-        return $items;
-    }
+    // Something
 }

@@ -9,17 +9,15 @@ declare(strict_types=1);
 namespace EveryWorkflow\EavBundle\Tests\Unit\Entity;
 
 use EveryWorkflow\CoreBundle\Helper\CoreHelper;
+use EveryWorkflow\CoreBundle\Model\SystemDateTime;
 use EveryWorkflow\DataFormBundle\Factory\FieldOptionFactory;
-use EveryWorkflow\DataFormBundle\Factory\FormFactory;
 use EveryWorkflow\DataFormBundle\Factory\FormFieldFactory;
 use EveryWorkflow\EavBundle\Factory\AttributeFieldFactory;
-use EveryWorkflow\EavBundle\Factory\EntityFactory;
 use EveryWorkflow\EavBundle\Form\EntityAttributeForm;
 use EveryWorkflow\EavBundle\Repository\AttributeRepository;
 use EveryWorkflow\EavBundle\Repository\BaseEntityRepository;
 use EveryWorkflow\EavBundle\Tests\Unit\BaseEavTestCase;
 use EveryWorkflow\MongoBundle\Factory\DocumentFactory;
-use EveryWorkflow\MongoBundle\Factory\DocumentRepositoryFactory;
 
 class EntityMustBeUniqueTest extends BaseEavTestCase
 {
@@ -33,19 +31,12 @@ class EntityMustBeUniqueTest extends BaseEavTestCase
         $attributeRepository = new AttributeRepository(
             $this->getMongoConnection(),
             $documentFactory,
-            $coreHelper
-        );
-        $documentRepoFactory = new DocumentRepositoryFactory(
-            $this->getMongoConnection(),
-            $documentFactory,
-            $coreHelper
+            $coreHelper,
+            new SystemDateTime($this->getCoreConfigProvider()),
+            $this->getValidatorFactory()
         );
         /** @var AttributeFieldFactory $attributeFieldFactory */
         $attributeFieldFactory = $this->getMockBuilder(AttributeFieldFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        /** @var FormFactory $formFactory */
-        $formFactory = $this->getMockBuilder(FormFactory::class)
             ->disableOriginalConstructor()
             ->getMock();
         /** @var FormFieldFactory $formFieldFactory */
@@ -53,7 +44,6 @@ class EntityMustBeUniqueTest extends BaseEavTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $entityFactory = new EntityFactory($this->getDataObjectFactory());
         $fieldOptionFactory = new FieldOptionFactory($this->getDataObjectFactory());
         $entityAttributeForm = new EntityAttributeForm(
             $this->getDataObjectFactory()->create(),
@@ -67,7 +57,8 @@ class EntityMustBeUniqueTest extends BaseEavTestCase
             $this->getMongoConnection(),
             $documentFactory,
             $coreHelper,
-            $entityFactory,
+            $this->getValidatorFactory(),
+            new SystemDateTime($this->getCoreConfigProvider()),
             $attributeRepository,
             $entityAttributeForm,
         );
@@ -78,7 +69,8 @@ class EntityMustBeUniqueTest extends BaseEavTestCase
             $this->getMongoConnection(),
             $documentFactory,
             $coreHelper,
-            $entityFactory,
+            $this->getValidatorFactory(),
+            new SystemDateTime($this->getCoreConfigProvider()),
             $attributeRepository,
             $entityAttributeForm,
         );

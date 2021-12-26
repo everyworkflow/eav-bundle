@@ -28,12 +28,12 @@ class Mongo_2021_01_01_01_00_00_Eav_Data_Migration implements MigrationInterface
     public function migrate(): bool
     {
         $indexKeys = [];
-        foreach ($this->entityRepository->getIndexNames() as $key) {
+        foreach ($this->entityRepository->getIndexKeys() as $key) {
             $indexKeys[$key] = 1;
         }
         $this->entityRepository->getCollection()->createIndex($indexKeys, ['unique' => true]);
         $indexKeys = [];
-        foreach ($this->attributeRepository->getIndexNames() as $key) {
+        foreach ($this->attributeRepository->getIndexKeys() as $key) {
             $indexKeys[$key] = 1;
         }
         $this->attributeRepository->getCollection()->createIndex($indexKeys, ['unique' => true]);

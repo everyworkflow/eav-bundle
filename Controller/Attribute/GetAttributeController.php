@@ -6,14 +6,13 @@
 
 declare(strict_types=1);
 
-namespace EveryWorkflow\EavBundle\Controller\Admin\Attribute;
+namespace EveryWorkflow\EavBundle\Controller\Attribute;
 
+use EveryWorkflow\CoreBundle\Annotation\EwRoute;
 use EveryWorkflow\EavBundle\Form\AttributeFormInterface;
 use EveryWorkflow\EavBundle\Repository\AttributeRepositoryInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
 
 class GetAttributeController extends AbstractController
 {
@@ -29,18 +28,22 @@ class GetAttributeController extends AbstractController
         $this->attributeForm = $attributeForm;
     }
 
-    /**
-     * @Route(
-     *     path="admin_api/eav/attribute/{uuid}",
-     *     defaults={"uuid"="create"},
-     *     name="admin.eav.attribute.view",
-     *     methods="GET"
-     * )
-     *
-     * @SuppressWarnings(PHPMD.CamelCaseParameterName)
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     */
-    public function __invoke(string $uuid, Request $request): JsonResponse
+    #[EwRoute(
+        path: "eav/attribute/{uuid}",
+        name: 'eav.attribute.view',
+        methods: 'GET',
+        permissions: 'eav.attribute.view',
+        swagger: [
+            'parameters' => [
+                [
+                    'name' => 'uuid',
+                    'in' => 'path',
+                    'default' => 'create',
+                ]
+            ]
+        ]
+    )]
+    public function __invoke(string $uuid = 'create'): JsonResponse
     {
         $data = [
             'data_form' => $this->attributeForm->toArray(),
@@ -55,6 +58,6 @@ class GetAttributeController extends AbstractController
             }
         }
 
-        return (new JsonResponse())->setData($data);
+        return new JsonResponse($data);
     }
 }

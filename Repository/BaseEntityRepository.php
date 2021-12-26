@@ -8,41 +8,29 @@ declare(strict_types=1);
 
 namespace EveryWorkflow\EavBundle\Repository;
 
-use Carbon\Carbon;
+use EveryWorkflow\CoreBundle\Factory\ValidatorFactoryInterface;
 use EveryWorkflow\CoreBundle\Helper\CoreHelperInterface;
+use EveryWorkflow\CoreBundle\Model\SystemDateTimeInterface;
+use EveryWorkflow\CoreBundle\Support\ArrayableInterface;
 use EveryWorkflow\DataFormBundle\Model\FormInterface;
 use EveryWorkflow\EavBundle\Attribute\BaseAttributeInterface;
 use EveryWorkflow\EavBundle\Entity\BaseEntityInterface;
-use EveryWorkflow\EavBundle\Factory\EntityFactoryInterface;
 use EveryWorkflow\EavBundle\Form\EntityAttributeFormInterface;
+use EveryWorkflow\EavBundle\Support\Attribute\EntityRepositoryAttribute;
 use EveryWorkflow\MongoBundle\Factory\DocumentFactoryInterface;
 use EveryWorkflow\MongoBundle\Model\MongoConnectionInterface;
 use EveryWorkflow\MongoBundle\Repository\BaseDocumentRepository;
-use MongoDB\InsertOneResult;
-use MongoDB\UpdateResult;
+use ReflectionClass;
 
 class BaseEntityRepository extends BaseDocumentRepository implements BaseEntityRepositoryInterface
 {
     /**
-     * Collection name must be defined.
-     */
-    protected string $collectionName = '';
-    /**
-     * index name must be defined.
-     */
-    protected array $indexNames = ['_id'];
-    /**
      * Entity code must be defined.
      */
     protected string $entityCode = '';
-    /**
-     * Entity event prefix must be defined.
-     */
-    protected string $entityEventPrefix = '';
 
     protected array $entityAttributes = [];
 
-    protected EntityFactoryInterface $entityFactory;
     protected AttributeRepositoryInterface $attributeRepository;
     protected EntityAttributeFormInterface $entityAttributeForm;
 
@@ -50,51 +38,40 @@ class BaseEntityRepository extends BaseDocumentRepository implements BaseEntityR
         MongoConnectionInterface $mongoConnection,
         DocumentFactoryInterface $documentFactory,
         CoreHelperInterface $coreHelper,
-        EntityFactoryInterface $entityFactory,
+        ValidatorFactoryInterface $validatorFactory,
+        SystemDateTimeInterface $systemDateTime,
         AttributeRepositoryInterface $attributeRepository,
         EntityAttributeFormInterface $entityAttributeForm,
         $entityAttributes = []
     ) {
-        parent::__construct($mongoConnection, $documentFactory, $coreHelper);
-        $this->entityFactory = $entityFactory;
+        parent::__construct($mongoConnection, $documentFactory, $coreHelper, $systemDateTime, $validatorFactory);
         $this->attributeRepository = $attributeRepository;
         $this->entityAttributeForm = $entityAttributeForm;
         $this->entityAttributes = $entityAttributes;
     }
 
-    /**
-     * @return mixed
-     *
-     * @throws \ReflectionException
-     *
-     * @todo Need to manage in more proper way
-     */
-    public function getEntityClass(): string
+    public function getRepositoryAttribute(): ?EntityRepositoryAttribute
     {
-        return $this->coreHelper->getEWFAnnotationReaderInterface()->getDocumentClass($this);
-    }
+        if (!$this->repositoryAttribute) {
+            $reflectionClass = new ReflectionClass(get_class($this));
+            $attributes = $reflectionClass->getAttributes(EntityRepositoryAttribute::class);
+            foreach ($attributes as $attribute) {
+                $this->repositoryAttribute = $attribute->newInstance();
+            }
+        }
 
-    public function getEntityFactory(): EntityFactoryInterface
-    {
-        return $this->entityFactory;
-    }
-
-    /**
-     * @throws \ReflectionException
-     */
-    public function getNewEntity(array $data = []): BaseEntityInterface
-    {
-        return $this->getEntityFactory()->create($this->getEntityClass(), $data);
+        return $this->repositoryAttribute;
     }
 
     public function getEntityCode(): string
     {
+        if (empty($this->entityCode) && $this->getRepositoryAttribute()) {
+            $this->entityCode = $this->getRepositoryAttribute()->getEntityCode();
+        }
+
         return $this->entityCode;
     }
 
-    /**
-     * @return $this
-     */
     public function setEntityCode(string $entityCode): self
     {
         $this->entityCode = $entityCode;
@@ -102,64 +79,21 @@ class BaseEntityRepository extends BaseDocumentRepository implements BaseEntityR
         return $this;
     }
 
-    public function findById(string $uuid): BaseEntityInterface
+    public function create(array $data = []): BaseEntityInterface
     {
-        /* @psalm-suppress UndefinedClass */
-        return $this->getNewEntity($this->findOne([
-            '_id' => new \MongoDB\BSON\ObjectId($uuid),
-        ])->toArray());
+        return $this->documentFactory->create($this->getDocumentClass(), $data);
     }
 
     /**
+     * @throws PrimaryKeyMissingException
      * @throws \Exception
      */
-    public function saveEntity(
-        BaseEntityInterface $entity,
+    public function saveOne(
+        ArrayableInterface $document,
         array $otherFilter = [],
         array $otherOptions = []
-    ): UpdateResult | InsertOneResult {
-        if (!$entity->getCreatedAt()) {
-            $entity->setCreatedAt(Carbon::now());
-        }
-        if (!$entity->getUpdatedAt()) {
-            $entity->setUpdatedAt(Carbon::now());
-        }
-        $documentData = $entity->toArray();
-        if (!isset($documentData['created_at'])) {
-            $documentData['created_at'] = Carbon::now()->toTimeString();
-        }
-        if (!isset($documentData['updated_at'])) {
-            $documentData['updated_at'] = Carbon::now()->toTimeString();
-        }
-
-        foreach ($this->getAttributes() as $attribute) {
-            if (isset($documentData[$attribute->getCode()])) {
-                switch ($attribute->getType()) {
-                    case 'date_attribute':
-                    case 'date_time_attribute': {
-                        if (is_string($documentData[$attribute->getCode()])) {
-                            $documentData[$attribute->getCode()] = new \MongoDB\BSON\UTCDateTime(strtotime($documentData[$attribute->getCode()]));
-                        }
-                        break;
-                    }
-                }
-            }
-        }
-
-        $newDocument = $this->getNewDocument($documentData);
-
-        return $this->save($entity, $otherFilter, $otherOptions);
-    }
-
-    public function setSystemAttribute(): void
-    {
-        $systemAttribute = $this->coreHelper->getEWFAnnotationReaderInterface()->getEntityAttribute($this);
-        foreach ($systemAttribute as $item) {
-            $attribute = $this->attributeRepository->getDocumentFactory()->createAttribute($item);
-            if ($attribute) {
-                $this->attributeRepository->save($attribute);
-            }
-        }
+    ): BaseEntityInterface {
+        return parent::saveOne($document, $otherFilter, $otherOptions);
     }
 
     /**

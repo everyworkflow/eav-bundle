@@ -2,31 +2,30 @@
  * @copyright EveryWorkflow. All rights reserved.
  */
 
-import React, {useContext, useEffect, useState} from 'react';
-import {useHistory, useParams} from 'react-router-dom';
+import React, { useContext, useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import Card from 'antd/lib/card';
 import Form from 'antd/lib/form';
-import PanelContext from "@EveryWorkflow/AdminPanelBundle/Admin/Context/PanelContext";
+import PanelContext from "@EveryWorkflow/PanelBundle/Context/PanelContext";
 import DataFormInterface from "@EveryWorkflow/DataFormBundle/Model/DataFormInterface";
-import {ACTION_SET_PAGE_TITLE} from "@EveryWorkflow/AdminPanelBundle/Admin/Reducer/PanelReducer";
+import { ACTION_SET_PAGE_TITLE } from "@EveryWorkflow/PanelBundle/Reducer/PanelReducer";
 import AbstractFieldInterface from "@EveryWorkflow/DataFormBundle/Model/Field/AbstractFieldInterface";
-import Remote from "@EveryWorkflow/AdminPanelBundle/Admin/Service/Remote";
-import PushAlertAction from "@EveryWorkflow/AdminPanelBundle/Admin/Action/PushAlertAction";
-import PageHeaderComponent from "@EveryWorkflow/AdminPanelBundle/Admin/Component/PageHeaderComponent";
-import BreadcrumbComponent from "@EveryWorkflow/AdminPanelBundle/Admin/Component/BreadcrumbComponent";
+import Remote from "@EveryWorkflow/PanelBundle/Service/Remote";
+import PageHeaderComponent from "@EveryWorkflow/AdminPanelBundle/Component/PageHeaderComponent";
+import BreadcrumbComponent from "@EveryWorkflow/AdminPanelBundle/Component/BreadcrumbComponent";
 import DataFormComponent from "@EveryWorkflow/DataFormBundle/Component/DataFormComponent";
-import {FORM_TYPE_HORIZONTAL} from "@EveryWorkflow/DataFormBundle/Component/DataFormComponent/DataFormComponent";
-import {ALERT_TYPE_ERROR, ALERT_TYPE_SUCCESS} from "@EveryWorkflow/CoreBundle/Action/AlertAction";
+import { FORM_TYPE_HORIZONTAL } from "@EveryWorkflow/DataFormBundle/Component/DataFormComponent/DataFormComponent";
+import AlertAction, { ALERT_TYPE_ERROR, ALERT_TYPE_SUCCESS } from "@EveryWorkflow/PanelBundle/Action/AlertAction";
 
 const SUBMIT_SAVE_CHANGES = 'save_changes';
 const SUBMIT_SAVE_CHANGES_AND_CONTINUE = 'save_changes_and_continue';
 
 const EntityFormPage = () => {
-    const {dispatch: panelDispatch} = useContext(PanelContext);
-    const {uuid = ''}: { uuid: string } = useParams();
+    const { dispatch: panelDispatch } = useContext(PanelContext);
+    const { uuid = '' }: { uuid: string | undefined } = useParams();
     const [form] = Form.useForm();
     const [dataForm, setDataForm] = useState<DataFormInterface>();
-    const history = useHistory();
+    const navigate = useNavigate();
     let submitAction: string | undefined = undefined;
 
     useEffect(() => {
@@ -55,11 +54,11 @@ const EntityFormPage = () => {
                 );
                 handleResponse(response);
             } catch (error: any) {
-                await PushAlertAction({
+                AlertAction({
                     message: error.message,
                     title: 'Fetch error',
                     type: ALERT_TYPE_ERROR,
-                })(panelDispatch);
+                });
             }
         };
 
@@ -76,14 +75,14 @@ const EntityFormPage = () => {
 
         const handlePostResponse = (response: any) => {
             if (response.message) {
-                PushAlertAction({
+                AlertAction({
                     message: response.message,
                     title: 'Form submit success',
                     type: ALERT_TYPE_SUCCESS,
-                })(panelDispatch);
+                });
             }
             if (submitAction === SUBMIT_SAVE_CHANGES) {
-                history.goBack();
+                navigate(-1);
             }
         };
 
@@ -94,11 +93,11 @@ const EntityFormPage = () => {
             );
             handlePostResponse(response);
         } catch (error: any) {
-            await PushAlertAction({
+            AlertAction({
                 message: error.message,
                 title: 'Submit error',
                 type: ALERT_TYPE_ERROR,
-            })(panelDispatch);
+            });
         }
     };
 
@@ -123,7 +122,7 @@ const EntityFormPage = () => {
                     },
                 ]}
             />
-            <BreadcrumbComponent/>
+            <BreadcrumbComponent />
             <Card className="app-container">
                 {dataForm && (
                     <DataFormComponent

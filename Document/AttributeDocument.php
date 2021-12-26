@@ -8,7 +8,9 @@ declare(strict_types=1);
 
 namespace EveryWorkflow\EavBundle\Document;
 
-use EveryWorkflow\CoreBundle\Annotation\EWFDataTypes;
+use EveryWorkflow\CoreBundle\Validation\Type\BooleanValidation;
+use EveryWorkflow\CoreBundle\Validation\Type\NumberValidation;
+use EveryWorkflow\CoreBundle\Validation\Type\StringValidation;
 use EveryWorkflow\MongoBundle\Document\BaseDocument;
 use EveryWorkflow\MongoBundle\Document\HelperTrait\CreatedUpdatedHelperTrait;
 use EveryWorkflow\MongoBundle\Document\HelperTrait\StatusHelperTrait;
@@ -18,10 +20,7 @@ class AttributeDocument extends BaseDocument implements AttributeDocumentInterfa
     use CreatedUpdatedHelperTrait;
     use StatusHelperTrait;
 
-    /**
-     * @return $this
-     * @EWFDataTypes(type="string", mongofield=self::KEY_CODE, required=TRUE, minLength=3, maxLength=50)
-     */
+    #[StringValidation(required: true, minLength: 3, maxLength: 50)]
     public function setCode(string $code): self
     {
         $this->dataObject->setData(self::KEY_CODE, $code);
@@ -34,10 +33,7 @@ class AttributeDocument extends BaseDocument implements AttributeDocumentInterfa
         return $this->dataObject->getData(self::KEY_CODE);
     }
 
-    /**
-     * @return $this
-     * @EWFDataTypes(type="string", mongofield=self::KEY_NAME, required=TRUE)
-     */
+    #[StringValidation(required: true)]
     public function setName(string $name): self
     {
         $this->dataObject->setData(self::KEY_NAME, $name);
@@ -50,10 +46,7 @@ class AttributeDocument extends BaseDocument implements AttributeDocumentInterfa
         return $this->dataObject->getData(self::KEY_NAME);
     }
 
-    /**
-     * @return $this
-     * @EWFDataTypes(type="string", mongofield=self::KEY_TYPE, required=TRUE)
-     */
+    #[StringValidation(required: true)]
     public function setType(string $type): self
     {
         $this->dataObject->setData(self::KEY_TYPE, $type);
@@ -66,10 +59,7 @@ class AttributeDocument extends BaseDocument implements AttributeDocumentInterfa
         return $this->dataObject->getData(self::KEY_TYPE);
     }
 
-    /**
-     * @return $this
-     * @EWFDataTypes(type="string", mongofield=self::KEY_CLASS, required=FALSE)
-     */
+    #[StringValidation()]
     public function setClass(string $className): self
     {
         $this->dataObject->setData(self::KEY_CLASS, $className);
@@ -82,10 +72,7 @@ class AttributeDocument extends BaseDocument implements AttributeDocumentInterfa
         return $this->dataObject->getData(self::KEY_CLASS);
     }
 
-    /**
-     * @return $this
-     * @EWFDataTypes(type="string", mongofield=self::KEY_ENTITY_CODE, required=TRUE)
-     */
+    #[StringValidation(required: true)]
     public function setEntityCode(string $entityCode): self
     {
         $this->dataObject->setData(self::KEY_ENTITY_CODE, $entityCode);
@@ -98,10 +85,7 @@ class AttributeDocument extends BaseDocument implements AttributeDocumentInterfa
         return $this->dataObject->getData(self::KEY_ENTITY_CODE);
     }
 
-    /**
-     * @return $this
-     * @EWFDataTypes(type="boolean", mongofield=self::KEY_IS_REQUIRED, required=TRUE)
-     */
+    #[BooleanValidation(default: false)]
     public function setIsRequired(bool $isRequired): self
     {
         $this->dataObject->setData(self::KEY_IS_REQUIRED, $isRequired);
@@ -114,10 +98,7 @@ class AttributeDocument extends BaseDocument implements AttributeDocumentInterfa
         return $this->dataObject->getData(self::KEY_IS_REQUIRED);
     }
 
-    /**
-     * @return $this
-     * @EWFDataTypes(type="boolean", mongofield=self::KEY_IS_READONLY, required=TRUE)
-     */
+    #[BooleanValidation(default: false)]
     public function setIsReadonly(bool $isReadonly): self
     {
         $this->dataObject->setData(self::KEY_IS_READONLY, $isReadonly);
@@ -130,6 +111,7 @@ class AttributeDocument extends BaseDocument implements AttributeDocumentInterfa
         return $this->dataObject->getData(self::KEY_IS_READONLY);
     }
 
+    #[BooleanValidation(default: false)]
     public function setIsUsedInGrid(bool $isUsedInGrid): self
     {
         $this->dataObject->setData(self::KEY_IS_USED_IN_GRID, $isUsedInGrid);
@@ -141,6 +123,7 @@ class AttributeDocument extends BaseDocument implements AttributeDocumentInterfa
         return (bool)$this->dataObject->getData(self::KEY_IS_USED_IN_GRID);
     }
 
+    #[BooleanValidation(default: false)]
     public function setIsUsedInForm(bool $isUsedInForm): self
     {
         $this->dataObject->setData(self::KEY_IS_USED_IN_FORM, $isUsedInForm);
@@ -152,10 +135,7 @@ class AttributeDocument extends BaseDocument implements AttributeDocumentInterfa
         return (bool)$this->dataObject->getData(self::KEY_IS_USED_IN_FORM);
     }
 
-    /**
-     * @return $this
-     * @EWFDataTypes(type="integer", mongofield=self::KEY_SORT_ORDER, required=TRUE)
-     */
+    #[NumberValidation()]
     public function setSortOrder(int $sortOrder): self
     {
         $this->dataObject->setData(self::KEY_SORT_ORDER, $sortOrder);

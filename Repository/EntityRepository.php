@@ -8,19 +8,14 @@ declare(strict_types=1);
 
 namespace EveryWorkflow\EavBundle\Repository;
 
-use EveryWorkflow\CoreBundle\Annotation\RepoDocument;
 use EveryWorkflow\EavBundle\Document\EntityDocument;
 use EveryWorkflow\EavBundle\Document\EntityDocumentInterface;
 use EveryWorkflow\MongoBundle\Repository\BaseDocumentRepository;
+use EveryWorkflow\MongoBundle\Support\Attribute\RepositoryAttribute;
 
-/**
- * @RepoDocument(doc_name=EntityDocument::class)
- */
+#[RepositoryAttribute(documentClass: EntityDocument::class, primaryKey: 'code')]
 class EntityRepository extends BaseDocumentRepository implements EntityRepositoryInterface
 {
-    protected string $collectionName = 'entity_collection';
-    protected array $indexNames = ['code'];
-
     /**
      * @return array|object|null
      */

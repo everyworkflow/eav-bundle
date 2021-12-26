@@ -14,5 +14,5 @@ use EveryWorkflow\MongoBundle\Document\HelperTrait\StatusHelperTraitInterface;
 
 interface BaseEntityInterface extends BaseDocumentInterface, StatusHelperTraitInterface, CreatedUpdatedHelperTraitInterface
 {
-
+    // Something
 }

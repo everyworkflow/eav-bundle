@@ -6,14 +6,13 @@
 
 declare(strict_types=1);
 
-namespace EveryWorkflow\EavBundle\Controller\Admin\Attribute;
+namespace EveryWorkflow\EavBundle\Controller\Attribute;
 
+use EveryWorkflow\CoreBundle\Annotation\EwRoute;
 use EveryWorkflow\EavBundle\Factory\AttributeFieldFactoryInterface;
 use EveryWorkflow\EavBundle\Repository\AttributeRepositoryInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
 
 class AttributeTypeController extends AbstractController
 {
@@ -28,15 +27,14 @@ class AttributeTypeController extends AbstractController
         $this->attributeFieldFactory = $attributeFieldFactory;
     }
 
-    /**
-     * @Route(
-     *     path="admin_api/eav/attribute_type",
-     *     name="admin.eav.attribute_type",
-     *     priority=10,
-     *     methods="GET"
-     * )
-     */
-    public function __invoke(Request $request): JsonResponse
+    #[EwRoute(
+        path: "eav/attribute-type",
+        name: 'eav.attribute_type',
+        priority: 10,
+        methods: 'GET',
+        swagger: true
+    )]
+    public function __invoke(): JsonResponse
     {
         $fields = [];
         $attributes = $this->attributeRepository->find(['entity_code' => 'user']);
@@ -44,6 +42,6 @@ class AttributeTypeController extends AbstractController
             $fields[] = $this->attributeFieldFactory->createFromAttribute($attribute)->toArray();
         }
 
-        return (new JsonResponse())->setData($fields);
+        return new JsonResponse($fields);
     }
 }

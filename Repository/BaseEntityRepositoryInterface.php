@@ -12,34 +12,25 @@ use EveryWorkflow\CoreBundle\Support\ArrayableInterface;
 use EveryWorkflow\DataFormBundle\Model\FormInterface;
 use EveryWorkflow\EavBundle\Attribute\BaseAttributeInterface;
 use EveryWorkflow\EavBundle\Entity\BaseEntityInterface;
-use EveryWorkflow\EavBundle\Factory\EntityFactoryInterface;
 use EveryWorkflow\MongoBundle\Repository\BaseDocumentRepositoryInterface;
-use MongoDB\InsertOneResult;
-use MongoDB\UpdateResult;
 
 interface BaseEntityRepositoryInterface extends BaseDocumentRepositoryInterface
 {
-    public function getEntityFactory(): EntityFactoryInterface;
-
-    public function getNewEntity(array $data = []): BaseEntityInterface;
-
     public function getEntityCode(): string;
 
     public function setEntityCode(string $entityCode): self;
 
-    /**
-     * @throws \Exception
-     */
-    public function findById(string $uuid): BaseEntityInterface;
+    public function create(array $data = []): BaseEntityInterface;
 
     /**
+     * @throws PrimaryKeyMissingException
      * @throws \Exception
      */
-    public function saveEntity(
-        BaseEntityInterface $entity,
+    public function saveOne(
+        ArrayableInterface $document,
         array $otherFilter = [],
         array $otherOptions = []
-    ): UpdateResult | InsertOneResult;
+    ): BaseEntityInterface;
 
     /**
      * @return BaseAttributeInterface[]
