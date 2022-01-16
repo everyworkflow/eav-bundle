@@ -18,6 +18,8 @@ eav:
         date_attribute: EveryWorkflow\EavBundle\Attribute\Type\DateAttribute
         date_time_attribute: EveryWorkflow\EavBundle\Attribute\Type\DateTimeAttribute
         boolean_attribute: EveryWorkflow\EavBundle\Attribute\Type\BooleanAttribute
+    attribute_forms:
+        text_attribute: EveryWorkflow\EavBundle\Form\Attribute\TextAttributeForm
     attribute_type_to_form_field_mapper:
         text_attribute: EveryWorkflow\EavBundle\Attribute\FieldMapper\TextMapper
         long_text_attribute: EveryWorkflow\EavBundle\Attribute\FieldMapper\LongTextMapper

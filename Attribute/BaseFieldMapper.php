@@ -9,7 +9,7 @@ declare(strict_types=1);
 namespace EveryWorkflow\EavBundle\Attribute;
 
 use EveryWorkflow\DataFormBundle\Factory\FormFieldFactoryInterface;
-use EveryWorkflow\DataFormBundle\Field\AbstractFieldInterface;
+use EveryWorkflow\DataFormBundle\Field\BaseFieldInterface;
 
 class BaseFieldMapper implements BaseFieldMapperInterface
 {
@@ -22,12 +22,12 @@ class BaseFieldMapper implements BaseFieldMapperInterface
         $this->formFieldFactory = $formFieldFactory;
     }
 
-    public function map(BaseAttributeInterface $attribute): AbstractFieldInterface
+    public function map(BaseAttributeInterface $attribute): BaseFieldInterface
     {
         $data = $attribute->toArray();
         $data['field_type'] = $this->fieldType;
 
-        return $this->formFieldFactory->createField($data)
+        return $this->formFieldFactory->create($data)
             ->setName($attribute->getCode())
             ->setLabel($attribute->getName());
     }

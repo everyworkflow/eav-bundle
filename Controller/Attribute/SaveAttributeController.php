@@ -24,14 +24,14 @@ class SaveAttributeController extends AbstractController
     }
 
     #[EwRoute(
-        path: "eav/attribute/{uuid}",
+        path: "eav/attribute/{code}",
         name: 'eav.attribute.save',
         methods: 'POST',
         permissions: 'eav.attribute.save',
         swagger: [
             'parameters' => [
                 [
-                    'name' => 'uuid',
+                    'name' => 'code',
                     'in' => 'path',
                     'default' => 'create',
                 ]
@@ -88,13 +88,13 @@ class SaveAttributeController extends AbstractController
             ]
         ]
     )]
-    public function __invoke(Request $request, string $uuid = 'create'): JsonResponse
+    public function __invoke(Request $request, string $code = 'create'): JsonResponse
     {
         $submitData = json_decode($request->getContent(), true);
-        if ('create' === $uuid) {
+        if ('create' === $code) {
             $item = $this->attributeRepository->create($submitData);
         } else {
-            $item = $this->attributeRepository->findById($uuid);
+            $item = $this->attributeRepository->findOne(['code' => $code]);
             foreach ($submitData as $key => $val) {
                 $item->setData($key, $val);
             }
@@ -103,7 +103,7 @@ class SaveAttributeController extends AbstractController
         $item = $this->attributeRepository->saveOne($item);
 
         return new JsonResponse([
-            'message' => 'Successfully saved changes.',
+            'detail' => 'Successfully saved changes.',
             'item' => $item->toArray(),
         ]);
     }

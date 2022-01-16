@@ -8,6 +8,7 @@ import PanelContext from "@EveryWorkflow/PanelBundle/Context/PanelContext";
 import { ACTION_SET_PAGE_TITLE } from "@EveryWorkflow/PanelBundle/Reducer/PanelReducer";
 import DataGridComponent from "@EveryWorkflow/DataGridBundle/Component/DataGridComponent";
 import { DATA_GRID_TYPE_PAGE } from "@EveryWorkflow/DataGridBundle/Component/DataGridComponent/DataGridComponent";
+import EntityCodeColumn from '@EveryWorkflow/EavBundle/Admin/Page/Attribute/AttributeListPage/EntityCodeColumn';
 
 const AttributeListPage = () => {
     const { dispatch: panelDispatch } = useContext(PanelContext);
@@ -22,6 +23,7 @@ const AttributeListPage = () => {
             <DataGridComponent
                 dataGridUrl={'/eav/attribute' + location.search}
                 dataGridType={DATA_GRID_TYPE_PAGE}
+                gridColumnMaps={{ entity_code: EntityCodeColumn }}
             />
         </>
     );

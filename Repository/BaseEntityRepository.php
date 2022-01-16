@@ -21,6 +21,7 @@ use EveryWorkflow\MongoBundle\Factory\DocumentFactoryInterface;
 use EveryWorkflow\MongoBundle\Model\MongoConnectionInterface;
 use EveryWorkflow\MongoBundle\Repository\BaseDocumentRepository;
 use ReflectionClass;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class BaseEntityRepository extends BaseDocumentRepository implements BaseEntityRepositoryInterface
 {
@@ -39,12 +40,20 @@ class BaseEntityRepository extends BaseDocumentRepository implements BaseEntityR
         DocumentFactoryInterface $documentFactory,
         CoreHelperInterface $coreHelper,
         ValidatorFactoryInterface $validatorFactory,
+        EventDispatcherInterface $eventDispatcher,
         SystemDateTimeInterface $systemDateTime,
         AttributeRepositoryInterface $attributeRepository,
         EntityAttributeFormInterface $entityAttributeForm,
         $entityAttributes = []
     ) {
-        parent::__construct($mongoConnection, $documentFactory, $coreHelper, $systemDateTime, $validatorFactory);
+        parent::__construct(
+            $mongoConnection,
+            $documentFactory,
+            $coreHelper,
+            $systemDateTime,
+            $validatorFactory,
+            $eventDispatcher
+        );
         $this->attributeRepository = $attributeRepository;
         $this->entityAttributeForm = $entityAttributeForm;
         $this->entityAttributes = $entityAttributes;

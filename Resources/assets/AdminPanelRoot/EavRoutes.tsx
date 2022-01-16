@@ -2,12 +2,12 @@
  * @copyright EveryWorkflow. All rights reserved.
  */
 
-import {lazy} from "react";
+import { lazy } from "react";
 
-const EntityListPage = lazy(() => import("@EveryWorkflow/EavBundle/Admin/Page/System/Entity/EntityListPage"));
-const EntityFormPage = lazy(() => import("@EveryWorkflow/EavBundle/Admin/Page/System/Entity/EntityFormPage"));
-const AttributeListPage = lazy(() => import("@EveryWorkflow/EavBundle/Admin/Page/System/Attribute/AttributeListPage"));
-const AttributeFormPage = lazy(() => import("@EveryWorkflow/EavBundle/Admin/Page/System/Attribute/AttributeFormPage"));
+const EntityListPage = lazy(() => import("@EveryWorkflow/EavBundle/Admin/Page/Entity/EntityListPage"));
+const EntityFormPage = lazy(() => import("@EveryWorkflow/EavBundle/Admin/Page/Entity/EntityFormPage"));
+const AttributeListPage = lazy(() => import("@EveryWorkflow/EavBundle/Admin/Page/Attribute/AttributeListPage"));
+const AttributeFormPage = lazy(() => import("@EveryWorkflow/EavBundle/Admin/Page/Attribute/AttributeFormPage"));
 
 export const EavRoutes = [
     {
@@ -21,7 +21,7 @@ export const EavRoutes = [
         component: EntityFormPage
     },
     {
-        path: '/system/entity/:uuid/edit',
+        path: '/system/entity/:code/edit',
         exact: true,
         component: EntityFormPage
     },
@@ -36,7 +36,7 @@ export const EavRoutes = [
         component: AttributeFormPage
     },
     {
-        path: '/system/attribute/:uuid/edit',
+        path: '/system/attribute/:code/edit',
         exact: true,
         component: AttributeFormPage
     }

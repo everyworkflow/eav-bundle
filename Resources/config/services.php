@@ -14,10 +14,10 @@ use EveryWorkflow\EavBundle\Controller\Attribute\ListAttributeController;
 use EveryWorkflow\EavBundle\Controller\Entity\ListEntityController;
 use EveryWorkflow\EavBundle\Factory\AttributeFactory;
 use EveryWorkflow\EavBundle\Form\AttributeForm;
+use EveryWorkflow\EavBundle\Form\AttributeFormInterface;
 use EveryWorkflow\EavBundle\Form\EntityForm;
 use EveryWorkflow\EavBundle\GridConfig\AttributeGridConfig;
 use EveryWorkflow\EavBundle\GridConfig\EntityGridConfig;
-use EveryWorkflow\EavBundle\Model\EavConfigProvider;
 use EveryWorkflow\EavBundle\Repository\AttributeRepository;
 use EveryWorkflow\EavBundle\Repository\EntityRepository;
 
@@ -34,15 +34,10 @@ return function (ContainerConfigurator $configurator) {
 
     $services->alias(BaseAttributeInterface::class, BaseAttribute::class);
 
-    // $services->set('everyworkflow_eav.options_resolver', EavOptionsResolver::class);
-    // $services->set('everyworkflow_eav.options_provider.config', EavConfigProvider::class)
-    // ->arg('$configs', '%eav%');
-
-    $services->set(EavConfigProvider::class)
-        ->arg('$configs', '%eav%');
-
     $services->set(AttributeRepository::class)
         ->arg('$documentFactory', service(AttributeFactory::class));
+
+    $services->set(AttributeFormInterface::class, AttributeForm::class);
 
     $services->set('ew_entity_grid_config', EntityGridConfig::class);
     $services->set('ew_entity_grid_source', RepositorySource::class)
@@ -54,7 +49,7 @@ return function (ContainerConfigurator $configurator) {
         ->arg('$dataGridConfig', service('ew_entity_grid_config'))
         ->arg('$form', service(EntityForm::class));
     $services->set(ListEntityController::class)
-            ->arg('$dataGrid', service('ew_entity_grid'));
+        ->arg('$dataGrid', service('ew_entity_grid'));
 
     $services->set('ew_attribute_grid_config', AttributeGridConfig::class);
     $services->set('ew_attribute_grid_source', RepositorySource::class)

@@ -9,7 +9,7 @@ declare(strict_types=1);
 namespace EveryWorkflow\EavBundle\Factory;
 
 use EveryWorkflow\DataFormBundle\Factory\FormFieldFactory;
-use EveryWorkflow\DataFormBundle\Field\AbstractFieldInterface;
+use EveryWorkflow\DataFormBundle\Field\BaseFieldInterface;
 use EveryWorkflow\DataFormBundle\Model\DataFormConfigProviderInterface;
 use EveryWorkflow\EavBundle\Attribute\BaseAttributeInterface;
 use EveryWorkflow\EavBundle\Attribute\BaseFieldMapper;
@@ -30,7 +30,7 @@ class AttributeFieldFactory extends FormFieldFactory implements AttributeFieldFa
         $this->eavConfigProvider = $eavConfigProvider;
     }
 
-    public function createFromAttribute(BaseAttributeInterface $attribute): AbstractFieldInterface
+    public function createFromAttribute(BaseAttributeInterface $attribute): BaseFieldInterface
     {
         $typeToFieldMappers = $this->eavConfigProvider->get('attribute_type_to_form_field_mapper');
 

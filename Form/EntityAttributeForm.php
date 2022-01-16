@@ -11,6 +11,7 @@ namespace EveryWorkflow\EavBundle\Form;
 use EveryWorkflow\CoreBundle\Model\DataObjectInterface;
 use EveryWorkflow\DataFormBundle\Factory\FieldOptionFactoryInterface;
 use EveryWorkflow\DataFormBundle\Factory\FormFieldFactoryInterface;
+use EveryWorkflow\DataFormBundle\Factory\FormSectionFactoryInterface;
 use EveryWorkflow\DataFormBundle\Field\Select\Option;
 use EveryWorkflow\DataFormBundle\Model\Form;
 use EveryWorkflow\EavBundle\Factory\AttributeFieldFactoryInterface;
@@ -22,45 +23,44 @@ class EntityAttributeForm extends Form implements EntityAttributeFormInterface
     protected FieldOptionFactoryInterface $fieldOptionFactory;
 
     public function __construct(
-        DataObjectInterface            $dataObject,
-        FormFieldFactoryInterface      $formFieldFactory,
+        DataObjectInterface $dataObject,
+        FormSectionFactoryInterface $formSectionFactory,
+        FormFieldFactoryInterface $formFieldFactory,
         AttributeFieldFactoryInterface $attributeFieldFactory,
-        FieldOptionFactoryInterface    $fieldOptionFactory
+        FieldOptionFactoryInterface $fieldOptionFactory
     ) {
-        parent::__construct($dataObject, $formFieldFactory);
+        parent::__construct($dataObject, $formSectionFactory, $formFieldFactory);
         $this->attributeFieldFactory = $attributeFieldFactory;
         $this->fieldOptionFactory = $fieldOptionFactory;
     }
 
     public function loadAttributeFields(BaseEntityRepositoryInterface $baseEntityRepository): self
     {
-        $this->fields = [];
-        $this->addField('_id', $this->getFormFieldFactory()->createField([
-            'name' => '_id',
-            'label' => 'UUID',
-            'is_readonly' => true,
-            'sort_order' => 1,
-        ]));
+        $fields = [
+            '_id' => $this->getFormFieldFactory()->create([
+                'name' => '_id',
+                'label' => 'UUID',
+                'is_readonly' => true,
+                'sort_order' => 1,
+            ])
+        ];
 
         try {
             $attributes = $baseEntityRepository->getAttributes();
             foreach ($attributes as $attribute) {
                 if ($attribute->isUsedInForm() && !in_array($attribute->getCode(), [
-                        'created_at',
-                        'updated_at',
-                    ])) {
-                    $this->addField(
-                        $attribute->getCode(),
-                        $this->attributeFieldFactory->createFromAttribute($attribute)
-                    );
+                    'created_at',
+                    'updated_at',
+                ])) {
+                    $fields[$attribute->getCode()] = $this->attributeFieldFactory->createFromAttribute($attribute);
                 }
             }
         } catch (\Exception $e) {
             // ignoring if attributes doesn't exist
         }
 
-        if (!isset($this->fields['status'])) {
-            $this->addField('status', $this->formFieldFactory->createField([
+        if (!isset($fields['status'])) {
+            $fields['status'] = $this->formFieldFactory->create([
                 'label' => 'Status',
                 'name' => 'status',
                 'field_type' => 'select_field',
@@ -75,23 +75,31 @@ class EntityAttributeForm extends Form implements EntityAttributeFormInterface
                     ]),
                 ],
                 'sort_order' => 2,
-            ]));
+            ]);
         }
 
-        $this->addField('created_at', $this->formFieldFactory->createField([
+        $fields['created_at'] = $this->formFieldFactory->create([
             'label' => 'Created at',
             'name' => 'created_at',
             'is_readonly' => true,
             'field_type' => 'date_time_picker_field',
             'sort_order' => 10000,
-        ]));
-        $this->addField('updated_at', $this->formFieldFactory->createField([
+        ]);
+        $fields['updated_at'] = $this->formFieldFactory->create([
             'label' => 'Updated at',
             'name' => 'updated_at',
             'is_readonly' => true,
             'field_type' => 'date_time_picker_field',
             'sort_order' => 10001,
-        ]));
+        ]);
+
+        $this->setSections([
+            $this->formSectionFactory->create([
+                'section_type' => 'card_section',
+                'title' => 'General',
+                'fields' => array_values($fields),
+            ]),
+        ]);
 
         return $this;
     }

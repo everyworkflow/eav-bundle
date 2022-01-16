@@ -24,14 +24,14 @@ class SaveEntityController extends AbstractController
     }
 
     #[EwRoute(
-        path: "eav/entity/{uuid}",
+        path: "eav/entity/{code}",
         name: 'eav.entity.save',
         methods: 'POST',
         permissions: 'eav.entity.save',
         swagger: [
             'parameters' => [
                 [
-                    'name' => 'uuid',
+                    'name' => 'code',
                     'in' => 'path',
                     'default' => 'create',
                 ]
@@ -64,12 +64,12 @@ class SaveEntityController extends AbstractController
             ]
         ]
     )]
-    public function __invoke(Request $request, string $uuid = 'create'): JsonResponse
+    public function __invoke(Request $request, string $code = 'create'): JsonResponse
     {
         $submitData = json_decode($request->getContent(), true);
 
         /* @var EntityDocumentInterface $entity */
-        if ('create' === $uuid) {
+        if ('create' === $code) {
             if (isset($submitData['code'])) {
                 try {
                     $entityByCode = $this->entityRepository->findOne([
@@ -86,7 +86,7 @@ class SaveEntityController extends AbstractController
             }
             $item = $this->entityRepository->create($submitData);
         } else {
-            $item = $this->entityRepository->findById($uuid);
+            $item = $this->entityRepository->findOne(['code' => $code]);
             foreach ($submitData as $key => $val) {
                 $item->setData($key, $val);
             }
@@ -96,7 +96,7 @@ class SaveEntityController extends AbstractController
 
 
         return new JsonResponse([
-            'message' => 'Successfully saved changes.',
+            'detail' => 'Successfully saved changes.',
             'item' => $item->toArray(),
         ]);
     }

@@ -28,29 +28,29 @@ class GetEntityController extends AbstractController
     }
 
     #[EwRoute(
-        path: "eav/entity/{uuid}",
+        path: "eav/entity/{code}",
         name: 'eav.entity.view',
         methods: 'GET',
         permissions: 'eav.entity.view',
         swagger: [
             'parameters' => [
                 [
-                    'name' => 'uuid',
+                    'name' => 'code',
                     'in' => 'path',
                     'default' => 'create',
                 ]
             ]
         ]
     )]
-    public function __invoke(string $uuid = 'create'): JsonResponse
+    public function __invoke(string $code = 'create'): JsonResponse
     {
         $data = [
             'data_form' => $this->entityForm->toArray(),
         ];
 
-        if ('create' !== $uuid) {
+        if ('create' !== $code) {
             try {
-                $entity = $this->entityRepository->findById($uuid);
+                $entity = $this->entityRepository->findOne(['code' => $code]);
                 $data['item'] = $entity->toArray();
             } catch (\Exception $e) {
                 // ignore if _id doesn't exist

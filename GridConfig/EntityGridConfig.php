@@ -9,10 +9,11 @@ declare(strict_types=1);
 namespace EveryWorkflow\EavBundle\GridConfig;
 
 use EveryWorkflow\CoreBundle\Model\DataObjectInterface;
+use EveryWorkflow\DataGridBundle\BulkAction\ButtonBulkAction;
 use EveryWorkflow\DataGridBundle\Factory\ActionFactoryInterface;
-use EveryWorkflow\DataGridBundle\Model\Action\ButtonAction;
-use EveryWorkflow\DataGridBundle\Model\Action\ConfirmedActionButton;
+use EveryWorkflow\DataGridBundle\HeaderAction\ButtonHeaderAction;
 use EveryWorkflow\DataGridBundle\Model\DataGridConfig;
+use EveryWorkflow\DataGridBundle\RowAction\ButtonRowAction;
 
 class EntityGridConfig extends DataGridConfig implements EntityGridConfigInterface
 {
@@ -42,9 +43,10 @@ class EntityGridConfig extends DataGridConfig implements EntityGridConfigInterfa
     public function getHeaderActions(): array
     {
         return array_merge([
-            $this->getActionFactory()->create(ButtonAction::class, [
-                'label' => 'Create new entity',
-                'path' => '/system/entity/create',
+            $this->getActionFactory()->create(ButtonHeaderAction::class, [
+                'button_label' => 'Create new',
+                'button_path' => '/system/entity/create',
+                'button_type' => 'primary',
             ]),
         ], parent::getHeaderActions());
     }
@@ -52,35 +54,39 @@ class EntityGridConfig extends DataGridConfig implements EntityGridConfigInterfa
     public function getRowActions(): array
     {
         return array_merge([
-            $this->getActionFactory()->create(ButtonAction::class, [
-                'label' => 'Edit',
-                'path' => '/system/entity/{_id}/edit',
+            $this->getActionFactory()->create(ButtonRowAction::class, [
+                'button_label' => 'Edit',
+                'button_path' => '/system/entity/{code}/edit',
+                'button_type' => 'primary',
             ]),
-            $this->getActionFactory()->create(ConfirmedActionButton::class, [
-                'label' => 'Delete',
-                'path' => '/system/entity/{_id}/delete',
+            $this->getActionFactory()->create(ButtonRowAction::class, [
+                'button_label' => 'Delete',
+                'button_path' => '/eav/entity/{code}',
+                'button_type' => 'primary',
+                'path_type' => ButtonRowAction::PATH_TYPE_DELETE_CALL,
+                'is_danger' => true,
+                'is_confirm' => true,
                 'confirm_message' => 'Are you sure, you want to delete this item?',
             ]),
-        ], parent::getBulkActions());
+        ], parent::getRowActions());
     }
-
 
     public function getBulkActions(): array
     {
-        return array_merge([
-            $this->getActionFactory()->create(ButtonAction::class, [
-                'label' => 'Enable',
-                'path' => '/system/entity/enable/{_id}',
+        $bulkActions = [
+            $this->getActionFactory()->create(ButtonBulkAction::class, [
+                'button_label' => 'Enable',
+                'button_path' => '/eav/entity/bulk-action/enable',
+                'button_type' => 'default',
+                'path_type' => ButtonBulkAction::PATH_TYPE_POST_CALL,
             ]),
-            $this->getActionFactory()->create(ButtonAction::class, [
-                'label' => 'Disable',
-                'path' => '/system/entity/disable/{_id}',
+            $this->getActionFactory()->create(ButtonBulkAction::class, [
+                'button_label' => 'Disable',
+                'button_path' => '/eav/entity/bulk-action/disable',
+                'button_type' => 'default',
+                'path_type' => ButtonBulkAction::PATH_TYPE_POST_CALL,
             ]),
-            $this->getActionFactory()->create(ConfirmedActionButton::class, [
-                'label' => 'Delete',
-                'path' => '/system/entity/delete/{_id}',
-                'confirm_message' => 'Are you sure, you want to delete all selected item(s)?',
-            ]),
-        ], parent::getBulkActions());
+        ];
+        return array_merge($bulkActions, parent::getBulkActions());
     }
 }
