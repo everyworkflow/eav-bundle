@@ -18,11 +18,13 @@ use EveryWorkflow\EavBundle\Repository\AttributeRepository;
 use EveryWorkflow\EavBundle\Repository\BaseEntityRepository;
 use EveryWorkflow\EavBundle\Tests\Unit\BaseEavTestCase;
 use EveryWorkflow\MongoBundle\Factory\DocumentFactory;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 
 class EntityMustBeUniqueTest extends BaseEavTestCase
 {
     public function testMultipleEntityInstancesMustBeUnique(): void
     {
+        $container = parent::getContainer();
         /** @var CoreHelper $coreHelper */
         $coreHelper = $this->getMockBuilder(CoreHelper::class)
             ->disableOriginalConstructor()
@@ -33,21 +35,19 @@ class EntityMustBeUniqueTest extends BaseEavTestCase
             $documentFactory,
             $coreHelper,
             new SystemDateTime($this->getCoreConfigProvider()),
-            $this->getValidatorFactory()
+            $this->getValidatorFactory(),
+            new EventDispatcher()
         );
         /** @var AttributeFieldFactory $attributeFieldFactory */
         $attributeFieldFactory = $this->getMockBuilder(AttributeFieldFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        /** @var FormFieldFactory $formFieldFactory */
-        $formFieldFactory = $this->getMockBuilder(FormFieldFactory::class)
             ->disableOriginalConstructor()
             ->getMock();
 
         $fieldOptionFactory = new FieldOptionFactory($this->getDataObjectFactory());
         $entityAttributeForm = new EntityAttributeForm(
             $this->getDataObjectFactory()->create(),
-            $formFieldFactory,
+            $this->getFormSectionFactory($container),
+            $this->getFormFieldFactory($container),
             $attributeFieldFactory,
             $fieldOptionFactory,
         );
@@ -57,8 +57,9 @@ class EntityMustBeUniqueTest extends BaseEavTestCase
             $this->getMongoConnection(),
             $documentFactory,
             $coreHelper,
-            $this->getValidatorFactory(),
             new SystemDateTime($this->getCoreConfigProvider()),
+            $this->getValidatorFactory(),
+            new EventDispatcher(),
             $attributeRepository,
             $entityAttributeForm,
         );
@@ -69,8 +70,9 @@ class EntityMustBeUniqueTest extends BaseEavTestCase
             $this->getMongoConnection(),
             $documentFactory,
             $coreHelper,
-            $this->getValidatorFactory(),
             new SystemDateTime($this->getCoreConfigProvider()),
+            $this->getValidatorFactory(),
+            new EventDispatcher(),
             $attributeRepository,
             $entityAttributeForm,
         );

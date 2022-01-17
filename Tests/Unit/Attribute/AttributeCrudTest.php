@@ -28,6 +28,7 @@ use EveryWorkflow\EavBundle\Repository\AttributeRepositoryInterface;
 use EveryWorkflow\EavBundle\Repository\EntityRepository;
 use EveryWorkflow\EavBundle\Tests\Unit\BaseEavTestCase;
 use EveryWorkflow\MongoBundle\Model\MongoConnectionInterface;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 
 class AttributeCrudTest extends BaseEavTestCase
 {
@@ -60,7 +61,8 @@ class AttributeCrudTest extends BaseEavTestCase
             $this->attributeFactory,
             $this->getNewCoreHelper(),
             new SystemDateTime($this->getCoreConfigProvider()),
-            $this->getValidatorFactory()
+            $this->getValidatorFactory(),
+            new EventDispatcher()
         );
         
         for ($i = 1; $i < 50; ++$i) {
@@ -84,14 +86,9 @@ class AttributeCrudTest extends BaseEavTestCase
 
     public function testListPageWithPagination(): void
     {
-        //         self::assertCount(
-        //             $this->attributeRepository->getCollection()->countDocuments(),
-        //             $this->testAttributeData,
-        //             'Mongo document count must be same.'
-        //         );
-
         $container = self::getContainer();
         $dataObjectFactory = $this->getDataObjectFactory();
+        $formSectionFactory = $this->getFormSectionFactory($container);
         $formFieldFactory = $this->getFormFieldFactory($container);
         $fieldOptionFactory = new FieldOptionFactory($dataObjectFactory);
         $actionFactory = new ActionFactory($dataObjectFactory);
@@ -113,14 +110,16 @@ class AttributeCrudTest extends BaseEavTestCase
             $this->attributeFactory,
             $this->getNewCoreHelper(),
             new SystemDateTime($this->getCoreConfigProvider()),
-            $this->getValidatorFactory()
+            $this->getValidatorFactory(),
+            new EventDispatcher()
         );
         $form = new AttributeForm(
             $dataObjectFactory->create(),
+            $formSectionFactory,
             $formFieldFactory,
             $entityRepository,
-            $this->getEavConfigProvider($container),
-            $fieldOptionFactory,
+            $this->getEavConfigProvider(),
+            $fieldOptionFactory
         );
 
         $dataGrid = $dataGridFactory->create($this->attributeRepository, $dataGridConfig, $parameter, $form);

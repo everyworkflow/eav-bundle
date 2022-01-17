@@ -39,9 +39,9 @@ class BaseEntityRepository extends BaseDocumentRepository implements BaseEntityR
         MongoConnectionInterface $mongoConnection,
         DocumentFactoryInterface $documentFactory,
         CoreHelperInterface $coreHelper,
+        SystemDateTimeInterface $systemDateTime,
         ValidatorFactoryInterface $validatorFactory,
         EventDispatcherInterface $eventDispatcher,
-        SystemDateTimeInterface $systemDateTime,
         AttributeRepositoryInterface $attributeRepository,
         EntityAttributeFormInterface $entityAttributeForm,
         $entityAttributes = []

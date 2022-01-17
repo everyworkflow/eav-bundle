@@ -25,7 +25,7 @@ class AttributeTypeTest extends BaseEavTestCase
         $this->attributeFactory = new AttributeFactory(
             $this->getDataObjectFactory(),
             $container,
-            $this->getEavConfigProvider($container),
+            $this->getEavConfigProvider(),
         );
     }
 

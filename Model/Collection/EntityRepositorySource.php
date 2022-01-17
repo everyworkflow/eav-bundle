@@ -30,7 +30,7 @@ class EntityRepositorySource extends RepositorySource implements EntityRepositor
     public function getRepository(): BaseRepositoryInterface
     {
         if ($this->baseEntityRepository) {
-            return $this->baseEntityRepository->getDocumentRepository();
+            return $this->baseEntityRepository;
         }
         return parent::getRepository();
     }
