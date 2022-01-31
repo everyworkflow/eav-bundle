@@ -20,7 +20,7 @@ class MultiSelectAttribute extends BaseAttribute implements MultiSelectAttribute
     /**
      * @var OptionInterface[]
      */
-    protected array $options;
+    protected array $options = [];
 
     public function __construct(DataObjectInterface $dataObject)
     {
