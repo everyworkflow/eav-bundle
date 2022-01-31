@@ -12,5 +12,5 @@ use EveryWorkflow\EavBundle\Document\AttributeDocumentInterface;
 
 interface BaseAttributeInterface extends AttributeDocumentInterface
 {
-    // Something
+    public function resetData(array $data): self;
 }

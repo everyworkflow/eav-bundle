@@ -114,9 +114,10 @@ class AttributeForm extends Form implements AttributeFormInterface
         return $options;
     }
 
-    protected function getAttributeTypeOptions(): array
+    protected function getAttributeTypeOptionsAndActions(): array
     {
         $options = [];
+        $fieldActions = [];
         $sortOrder = 1;
         foreach ($this->eavConfigProvider->get('attribute_types') as $attCode => $attClass) {
             /** @var OptionInterface $option */
@@ -127,9 +128,17 @@ class AttributeForm extends Form implements AttributeFormInterface
             ]);
             ++$sortOrder;
             $options[] = $option;
+            $fieldActions[$attCode] = [
+                [
+                    'action_type' => 'update_form'
+                ]
+            ];
         }
 
-        return $options;
+        return [
+            'options' => $options,
+            'field_actions' => $fieldActions,
+        ];
     }
 
     protected function getGeneralFields(): array
@@ -160,16 +169,8 @@ class AttributeForm extends Form implements AttributeFormInterface
                 'label' => 'Type',
                 'name' => 'type',
                 'field_type' => 'select_field',
-                'options' => $this->getAttributeTypeOptions(),
                 'is_actionable' => true,
-                'field_actions' => [
-                    'text_attribute' => [
-                        [
-                            'action_type' => 'update_form',
-                            'path' => '/eav/attribute/additional-form/{type}'
-                        ],
-                    ],
-                ],
+                ...$this->getAttributeTypeOptionsAndActions(),
             ]),
             $this->formFieldFactory->create([
                 'label' => 'Status',
@@ -212,5 +213,11 @@ class AttributeForm extends Form implements AttributeFormInterface
         }
 
         return $fields;
+    }
+
+    public function toArray(): array
+    {
+        $this->dataObject->setDataIfNot(self::KEY_FORM_UPDATE_PATH, '/eav/attribute/additional-form');
+        return parent::toArray();
     }
 }

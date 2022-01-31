@@ -37,19 +37,8 @@ class AttributeFactory extends DocumentFactory implements AttributeFactoryInterf
     protected function fillFieldWithData(mixed $field, array $data): ?BaseAttributeInterface
     {
         if ($field instanceof BaseAttributeInterface) {
-            foreach ($data as $key => $val) {
-                if ('_id' === $key) {
-                    $val = (string)$val;
-                } elseif (CreatedUpdatedHelperTraitInterface::KEY_CREATED_AT === $key ||
-                    CreatedUpdatedHelperTraitInterface::KEY_UPDATED_AT === $key) {
-                    $val = new Carbon($val);
-                }
-                $methodName = $this->generateSetMethodName($key);
-                if (method_exists($field, $methodName)) {
-                    $field->$methodName($val);
-                }
-            }
-
+            $field->resetData($data);
+            
             return $field;
         }
 

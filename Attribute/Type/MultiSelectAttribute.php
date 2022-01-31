@@ -40,7 +40,11 @@ class MultiSelectAttribute extends BaseAttribute implements MultiSelectAttribute
             $this->options = $options;
         } elseif ($options instanceof \MongoDB\Model\BSONArray) {
             foreach ($options as $option) {
-                $this->options[] = $option->getArrayCopy();
+                if ($option instanceof \MongoDB\Model\BSONDocument) {
+                    $this->options[] = $option->getArrayCopy();
+                } else if (is_array($option)) {
+                    $this->options[] = $option;
+                }
             }
         }
 
