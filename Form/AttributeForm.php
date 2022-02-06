@@ -47,11 +47,13 @@ class AttributeForm extends Form implements AttributeFormInterface
         $sections = [
             $this->getFormSectionFactory()->create([
                 'section_type' => 'card_section',
+                'code' => 'general',
                 'title' => 'General',
                 'sort_order' => 1000,
             ])->setFields($this->getGeneralFields()),
             $this->getFormSectionFactory()->create([
                 'section_type' => 'card_section',
+                'code' => 'attribute',
                 'title' => 'Attribute',
                 'sort_order' => 5000,
             ])->setFields([

@@ -20,6 +20,7 @@ class EntityForm extends Form implements EntityFormInterface
         $sections = [
             $this->getFormSectionFactory()->create([
                 'section_type' => 'card_section',
+                'code' => 'general',
                 'title' => 'General',
             ])->setFields($this->getGeneralFields()),
         ];

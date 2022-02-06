@@ -96,6 +96,7 @@ class EntityAttributeForm extends Form implements EntityAttributeFormInterface
         $this->setSections([
             $this->formSectionFactory->create([
                 'section_type' => 'card_section',
+                'code' => 'general',
                 'title' => 'General',
                 'fields' => array_values($fields),
             ]),

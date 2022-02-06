@@ -20,6 +20,7 @@ class TextAttributeForm extends AttributeForm implements TextAttributeFormInterf
         $sections = [
             $this->getFormSectionFactory()->create([
                 'section_type' => 'card_section',
+                'code' => 'form_field',
                 'title' => 'Form Field',
                 'sort_order' => 10000,
             ])->setFields([
@@ -65,5 +66,11 @@ class TextAttributeForm extends AttributeForm implements TextAttributeFormInterf
             ]),
         ];
         return array_merge(parent::getSections(), $sections);
+    }
+
+    public function toArray(): array
+    {
+        $this->dataObject->setDataIfNot(self::KEY_IS_FORM_ANCHOR_ENABLE, true);
+        return parent::toArray();
     }
 }
