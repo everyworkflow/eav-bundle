@@ -19,8 +19,6 @@ class SelectMapper extends BaseFieldMapper implements SelectMapperInterface
 
     public function map(BaseAttributeInterface|SelectAttributeInterface $attribute): BaseFieldInterface
     {
-        /** @var \EveryWorkflow\DataFormBundle\Field\SelectFieldInterface $field */
-        $field = parent::map($attribute);
-        return $field->setOptions($attribute->getOptions());
+        return parent::map($attribute);
     }
 }
