@@ -14,12 +14,14 @@ eav:
         multi_select_attribute: EveryWorkflow\EavBundle\Attribute\Type\MultiSelectAttribute
         number_attribute: EveryWorkflow\EavBundle\Attribute\Type\NumberAttribute
         currency_attribute: EveryWorkflow\EavBundle\Attribute\Type\CurrencyAttribute
-        swatch_attribute: EveryWorkflow\EavBundle\Attribute\Type\SwatchAttribute
         date_attribute: EveryWorkflow\EavBundle\Attribute\Type\DateAttribute
         date_time_attribute: EveryWorkflow\EavBundle\Attribute\Type\DateTimeAttribute
         boolean_attribute: EveryWorkflow\EavBundle\Attribute\Type\BooleanAttribute
     attribute_forms:
         text_attribute: EveryWorkflow\EavBundle\Form\Attribute\TextAttributeForm
+        long_text_attribute: EveryWorkflow\EavBundle\Form\Attribute\LongTextAttributeForm
+        select_attribute: EveryWorkflow\EavBundle\Form\Attribute\SelectAttributeForm
+        multi_select_attribute: EveryWorkflow\EavBundle\Form\Attribute\MultiSelectAttributeForm
     attribute_type_to_form_field_mapper:
         text_attribute: EveryWorkflow\EavBundle\Attribute\FieldMapper\TextMapper
         long_text_attribute: EveryWorkflow\EavBundle\Attribute\FieldMapper\LongTextMapper
@@ -27,7 +29,6 @@ eav:
         multi_select_attribute: EveryWorkflow\EavBundle\Attribute\FieldMapper\MultiSelectMapper
         number_attribute: EveryWorkflow\EavBundle\Attribute\FieldMapper\NumberMapper
         currency_attribute: EveryWorkflow\EavBundle\Attribute\FieldMapper\CurrencyMapper
-        swatch_attribute: EveryWorkflow\EavBundle\Attribute\FieldMapper\SwatchMapper
         date_attribute: EveryWorkflow\EavBundle\Attribute\FieldMapper\DateMapper
         date_time_attribute: EveryWorkflow\EavBundle\Attribute\FieldMapper\DateTimeMapper
         boolean_attribute: EveryWorkflow\EavBundle\Attribute\FieldMapper\BooleanAttribute

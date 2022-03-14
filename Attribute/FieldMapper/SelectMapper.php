@@ -19,6 +19,26 @@ class SelectMapper extends BaseFieldMapper implements SelectMapperInterface
 
     public function map(BaseAttributeInterface|SelectAttributeInterface $attribute): BaseFieldInterface
     {
-        return parent::map($attribute);
+        $data = $attribute->toArray();
+        if (isset($data['options']) && is_array($data['options'])) {
+            $options = [];
+            foreach ($data['options'] as $item) {
+                if (isset($item['key'], $item['value'])) {
+                    $options[] = $item;
+                } else if (isset($item['code'], $item['label'])) {
+                    $options[] = [
+                        'key' => $item['code'],
+                        'value' => $item['label'],
+                    ];
+                }
+            }
+            $data['options'] = $options;
+        }
+
+        $data['field_type'] = $this->fieldType;
+
+        return $this->formFieldFactory->create($data)
+            ->setName($attribute->getCode())
+            ->setLabel($attribute->getName());
     }
 }

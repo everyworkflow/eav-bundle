@@ -58,8 +58,8 @@ class AttributeForm extends Form implements AttributeFormInterface
                 'sort_order' => 5000,
             ])->setFields([
                 $this->formFieldFactory->create([
-                    'label' => 'Default',
-                    'name' => 'default',
+                    'label' => 'Default value',
+                    'name' => 'default_value',
                     'field_type' => 'text_field',
                 ]),
                 $this->formFieldFactory->create([

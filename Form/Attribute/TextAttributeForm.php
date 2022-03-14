@@ -63,6 +63,26 @@ class TextAttributeForm extends AttributeForm implements TextAttributeFormInterf
                     'name' => 'pattern',
                     'field_type' => 'text_field',
                 ]),
+                $this->formFieldFactory->create([
+                    'label' => 'Prefix tab text',
+                    'name' => 'prefix_tab_text',
+                    'field_type' => 'text_field',
+                ]),
+                $this->formFieldFactory->create([
+                    'label' => 'Suffix tab text',
+                    'name' => 'suffix_tab_text',
+                    'field_type' => 'text_field',
+                ]),
+                $this->formFieldFactory->create([
+                    'label' => 'Prefix text',
+                    'name' => 'prefix_text',
+                    'field_type' => 'text_field',
+                ]),
+                $this->formFieldFactory->create([
+                    'label' => 'Suffix text',
+                    'name' => 'suffix_text',
+                    'field_type' => 'text_field',
+                ]),
             ]),
         ];
         return array_merge(parent::getSections(), $sections);
