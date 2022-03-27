@@ -26,37 +26,39 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 class BaseEntityRepository extends BaseDocumentRepository implements BaseEntityRepositoryInterface
 {
     /**
-     * Entity code must be defined.
+     * @var string $entityCode - Entity unique identifier, must be defined.
+     * @var array $entityAttributes - Entity attributes.
      */
-    protected string $entityCode = '';
-
-    protected array $entityAttributes = [];
-
-    protected AttributeRepositoryInterface $attributeRepository;
-    protected EntityAttributeFormInterface $entityAttributeForm;
-
     public function __construct(
-        MongoConnectionInterface $mongoConnection,
-        DocumentFactoryInterface $documentFactory,
-        CoreHelperInterface $coreHelper,
-        SystemDateTimeInterface $systemDateTime,
-        ValidatorFactoryInterface $validatorFactory,
-        EventDispatcherInterface $eventDispatcher,
-        AttributeRepositoryInterface $attributeRepository,
-        EntityAttributeFormInterface $entityAttributeForm,
-        $entityAttributes = []
+        protected AttributeRepositoryInterface $attributeRepository,
+        protected EntityAttributeFormInterface $entityAttributeForm,
+        protected DocumentFactoryInterface $documentFactory,
+        protected CoreHelperInterface $coreHelper,
+        protected SystemDateTimeInterface $systemDateTime,
+        protected ValidatorFactoryInterface $validatorFactory,
+        protected EventDispatcherInterface $eventDispatcher,
+        protected MongoConnectionInterface $mongoConnection,
+        protected string $collectionName = '',
+        protected string|array $primaryKey = '',
+        protected array $indexKeys = [],
+        protected string $eventPrefix = '',
+        protected ?string $documentClass = null,
+        protected string $entityCode = '',
+        protected array $entityAttributes = []
     ) {
         parent::__construct(
-            $mongoConnection,
             $documentFactory,
             $coreHelper,
             $systemDateTime,
             $validatorFactory,
-            $eventDispatcher
+            $eventDispatcher,
+            $mongoConnection,
+            $collectionName,
+            $primaryKey,
+            $indexKeys,
+            $eventPrefix,
+            $documentClass
         );
-        $this->attributeRepository = $attributeRepository;
-        $this->entityAttributeForm = $entityAttributeForm;
-        $this->entityAttributes = $entityAttributes;
     }
 
     public function getRepositoryAttribute(): ?EntityRepositoryAttribute
