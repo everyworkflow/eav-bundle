@@ -31,12 +31,12 @@ class EntityMustBeUniqueTest extends BaseEavTestCase
             ->getMock();
         $documentFactory = new DocumentFactory($this->getDataObjectFactory());
         $attributeRepository = new AttributeRepository(
-            $this->getMongoConnection(),
             $documentFactory,
             $coreHelper,
             new SystemDateTime($this->getCoreConfigProvider()),
             $this->getValidatorFactory(),
-            new EventDispatcher()
+            new EventDispatcher(),
+            $this->getMongoConnection()
         );
         /** @var AttributeFieldFactory $attributeFieldFactory */
         $attributeFieldFactory = $this->getMockBuilder(AttributeFieldFactory::class)
@@ -54,27 +54,27 @@ class EntityMustBeUniqueTest extends BaseEavTestCase
 
         /* Setting up test entity 1 object */
         $test1DocRepository = new BaseEntityRepository(
-            $this->getMongoConnection(),
+            $attributeRepository,
+            $entityAttributeForm,
             $documentFactory,
             $coreHelper,
             new SystemDateTime($this->getCoreConfigProvider()),
             $this->getValidatorFactory(),
             new EventDispatcher(),
-            $attributeRepository,
-            $entityAttributeForm,
+            $this->getMongoConnection()
         );
         $test1DocRepository->setCollectionName('test_1_entity');
 
         /* Setting up another test entity 2 object */
         $test2DocRepository = new BaseEntityRepository(
-            $this->getMongoConnection(),
+            $attributeRepository,
+            $entityAttributeForm,
             $documentFactory,
             $coreHelper,
             new SystemDateTime($this->getCoreConfigProvider()),
             $this->getValidatorFactory(),
             new EventDispatcher(),
-            $attributeRepository,
-            $entityAttributeForm,
+            $this->getMongoConnection()
         );
         $test2DocRepository->setCollectionName('test_2_entity');
 

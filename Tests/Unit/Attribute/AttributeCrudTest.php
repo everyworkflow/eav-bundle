@@ -16,8 +16,6 @@ use EveryWorkflow\DataFormBundle\Factory\FieldOptionFactory;
 use EveryWorkflow\DataGridBundle\Factory\ActionFactory;
 use EveryWorkflow\DataGridBundle\Factory\DataGridFactory;
 use EveryWorkflow\EavBundle\Attribute\BaseAttributeInterface;
-use EveryWorkflow\EavBundle\Document\AttributeDocument;
-use EveryWorkflow\EavBundle\Document\EntityDocument;
 use EveryWorkflow\EavBundle\Factory\AttributeFactory;
 use EveryWorkflow\EavBundle\Factory\AttributeFactoryInterface;
 use EveryWorkflow\EavBundle\Form\AttributeForm;
@@ -27,6 +25,7 @@ use EveryWorkflow\EavBundle\Repository\AttributeRepository;
 use EveryWorkflow\EavBundle\Repository\AttributeRepositoryInterface;
 use EveryWorkflow\EavBundle\Repository\EntityRepository;
 use EveryWorkflow\EavBundle\Tests\Unit\BaseEavTestCase;
+use EveryWorkflow\MongoBundle\Factory\DocumentFactory;
 use EveryWorkflow\MongoBundle\Model\MongoConnectionInterface;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
@@ -57,20 +56,21 @@ class AttributeCrudTest extends BaseEavTestCase
         $this->eavConfigProvider = $this->getEavConfigProvider();
         $this->attributeFactory = new AttributeFactory($this->getDataObjectFactory(), $container, $this->eavConfigProvider);
         $this->attributeRepository = new AttributeRepository(
-            $this->mongoConnection,
             $this->attributeFactory,
             $this->getNewCoreHelper(),
             new SystemDateTime($this->getCoreConfigProvider()),
             $this->getValidatorFactory(),
-            new EventDispatcher()
+            new EventDispatcher(),
+            $this->getMongoConnection()
         );
-        
+
         for ($i = 1; $i < 50; ++$i) {
             $this->testAttributeData[] = $this->attributeFactory->createAttribute([
                 'code' => 'attr_' . $i,
                 'name' => 'Test attribute ' . $i,
                 'entity_code' => 'test_entity_crud',
                 'type' => 'text_attribute',
+                'sort_order' => $i,
             ]);
         }
         foreach ($this->testAttributeData as $item) {
@@ -105,13 +105,15 @@ class AttributeCrudTest extends BaseEavTestCase
             'entity_code' => 'test_entity_crud',
         ]);
 
+        $documentFactory = new DocumentFactory($this->getDataObjectFactory());
+
         $entityRepository = new EntityRepository(
-            $this->mongoConnection,
-            $this->attributeFactory,
+            $documentFactory,
             $this->getNewCoreHelper(),
             new SystemDateTime($this->getCoreConfigProvider()),
             $this->getValidatorFactory(),
-            new EventDispatcher()
+            new EventDispatcher(),
+            $this->getMongoConnection()
         );
         $form = new AttributeForm(
             $dataObjectFactory->create(),
