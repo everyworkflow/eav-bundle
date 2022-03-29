@@ -13,6 +13,7 @@ use EveryWorkflow\EavBundle\Form\EntityFormInterface;
 use EveryWorkflow\EavBundle\Repository\EntityRepositoryInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 
 class GetEntityController extends AbstractController
 {
@@ -42,11 +43,9 @@ class GetEntityController extends AbstractController
             ]
         ]
     )]
-    public function __invoke(string $code = 'create'): JsonResponse
+    public function __invoke(Request $request, string $code = 'create'): JsonResponse
     {
-        $data = [
-            'data_form' => $this->entityForm->toArray(),
-        ];
+        $data = [];
 
         if ('create' !== $code) {
             try {
@@ -55,6 +54,10 @@ class GetEntityController extends AbstractController
             } catch (\Exception $e) {
                 // ignore if _id doesn't exist
             }
+        }
+
+        if ($request->get('for') === 'data-form') {
+            $data['data_form'] = $this->entityForm->toArray();
         }
 
         return new JsonResponse($data);

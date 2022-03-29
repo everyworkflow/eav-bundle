@@ -13,6 +13,7 @@ use EveryWorkflow\EavBundle\Form\AttributeFormInterface;
 use EveryWorkflow\EavBundle\Repository\AttributeRepositoryInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 
 class GetAttributeController extends AbstractController
 {
@@ -43,19 +44,17 @@ class GetAttributeController extends AbstractController
             ]
         ]
     )]
-    public function __invoke(string $code = 'create'): JsonResponse
+    public function __invoke(Request $request, string $code = 'create'): JsonResponse
     {
-        $data = [
-            'data_form' => $this->attributeForm->toArray(),
-        ];
+        $data = [];
 
         if ('create' !== $code) {
-            try {
-                $entity = $this->attributeRepository->findOne(['code' => $code]);
-                $data['item'] = $entity->toArray();
-            } catch (\Exception $e) {
-                // ignore if _id doesn't exist
-            }
+            $entity = $this->attributeRepository->findOne(['code' => $code]);
+            $data['item'] = $entity->toArray();
+        }
+
+        if ($request->get('for') === 'data-form') {
+            $data['data_form'] = $this->attributeForm->toArray();
         }
 
         return new JsonResponse($data);
