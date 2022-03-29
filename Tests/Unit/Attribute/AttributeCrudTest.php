@@ -28,6 +28,7 @@ use EveryWorkflow\EavBundle\Tests\Unit\BaseEavTestCase;
 use EveryWorkflow\MongoBundle\Factory\DocumentFactory;
 use EveryWorkflow\MongoBundle\Model\MongoConnectionInterface;
 use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\HttpFoundation\Request;
 
 class AttributeCrudTest extends BaseEavTestCase
 {
@@ -125,7 +126,7 @@ class AttributeCrudTest extends BaseEavTestCase
         );
 
         $dataGrid = $dataGridFactory->create($this->attributeRepository, $dataGridConfig, $parameter, $form);
-        $gridData = $dataGrid->toArray();
+        $gridData = $dataGrid->setFromRequest(new Request(['for' => 'data-grid']))->toArray();
 
         self::assertIsBool(
             count($this->testAttributeData) <= count($gridData['data_collection']['results']),
