@@ -77,7 +77,7 @@ class SaveEntityController extends AbstractController
                     ]);
                     if ($entityByCode) {
                         return new JsonResponse([
-                            'message' => "Entity with code '${submitData['code']}' already exists."
+                            'message' => 'Entity with code ' . $submitData['code'] . ' already exists.'
                         ], JsonResponse::HTTP_BAD_REQUEST);
                     }
                 } catch (\Exception $e) {
